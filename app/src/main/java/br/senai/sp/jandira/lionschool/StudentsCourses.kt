@@ -1,13 +1,11 @@
 package br.senai.sp.jandira.lionschool
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,28 +15,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import br.senai.sp.jandira.lionschool.model.CoursesList
+import br.senai.sp.jandira.lionschool.model.Students
+import br.senai.sp.jandira.lionschool.model.StudentsList
 import br.senai.sp.jandira.lionschool.service.RetofitiFactory
 import br.senai.sp.jandira.lionschool.ui.theme.ui.theme.LionSchoolTheme
 import coil.compose.AsyncImage
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
-class Courses : ComponentActivity() {
+class StudentsCourses : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LionSchoolTheme {
-                aaa()
+                var siglaCurso = intent.getStringExtra("sigla")
+                studentsCourses(siglaCurso.toString())
             }
         }
     }
@@ -46,24 +44,22 @@ class Courses : ComponentActivity() {
 
 
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun aaa() {
+fun studentsCourses(siglaCurso: String) {
 
-    val context = LocalContext.current
-
-    var listCourses by remember {
-        mutableStateOf(listOf<br.senai.sp.jandira.lionschool.model.Courses>())
+    var listStudents by remember {
+        mutableStateOf(listOf<Students>())
     }
 
-    val call = RetofitiFactory().getCharacterService().getCourses()
+    val call = RetofitiFactory().getStudentsService().getCoursesStudents(siglaCurso)
 
-    call.enqueue(object : Callback<CoursesList>{
-        override fun onResponse(call: Call<CoursesList>, response: Response<CoursesList>) {
-            listCourses = response.body()!!.cursos
+    call.enqueue(object : Callback<StudentsList> {
+        override fun onResponse(call: Call<StudentsList>, response: Response<StudentsList>) {
+            listStudents = response.body()!!.alunos
         }
 
-        override fun onFailure(call: Call<CoursesList>, t: Throwable) {
+        override fun onFailure(call: Call<StudentsList>, t: Throwable) {
             Log.i("teste", "onFailure:${t.message} " )
         }
     })
@@ -84,7 +80,7 @@ fun aaa() {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Image(
-                    painter = painterResource(id = br.senai.sp.jandira.lionschool.R.drawable.logo),
+                    painter = painterResource(id = br.senai.sp.jandira.lionschool.R.drawable.search),
                     contentDescription = "",
                     modifier = Modifier
                         .width(60.dp)
@@ -110,10 +106,10 @@ fun aaa() {
                     leadingIcon = {
                         Icon(
                             painter = painterResource(
-                                id = R.drawable.search
+                                id = br.senai.sp.jandira.lionschool.R.drawable.logo
                             ),
                             contentDescription = "",
-                            tint = colorResource(id = R.color.white)
+                            tint = colorResource(id = br.senai.sp.jandira.lionschool.R.color.white)
                         )
                     }
                 )
@@ -127,7 +123,7 @@ fun aaa() {
             )
             {
                 Text(
-                    text = "Courses :", modifier = Modifier.padding(10.dp),
+                    text = "Students", modifier = Modifier.padding(10.dp),
                     color = Color(234, 204, 47),
                     fontSize = 40.sp,
                     fontWeight = FontWeight(700)
@@ -147,24 +143,18 @@ fun aaa() {
                         .fillMaxWidth()
                         .padding(30.dp)
                 ) {
-                    items(listCourses) {
+                    items(listStudents) {
                         Spacer(modifier = Modifier.size(20.dp))
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp)
-                                .clickable{
-                                    var openStudents = Intent(context, StudentsCourses::class.java)
-
-                                    openStudents.putExtra("sigla", it.sigla)
-                                    context.startActivity(openStudents)
-                                },
+                                .height(100.dp),
                             backgroundColor = Color(208, 220, 238),
                             shape = RoundedCornerShape(16.dp)
                         ) {
                             Row(modifier = Modifier.padding(10.dp)) {
                                 AsyncImage(
-                                    model = it.icone,
+                                    model = it.image,
                                     contentDescription = "",
                                     modifier = Modifier
                                         .size(80.dp)
@@ -172,7 +162,7 @@ fun aaa() {
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Column() {
                                     Text(
-                                        text = it.sigla,
+                                        text = it.nome,
                                         fontSize = 35.sp,
                                         color = Color.Black,
                                         fontWeight = FontWeight.Bold,
@@ -188,4 +178,8 @@ fun aaa() {
 
         }
     }
+}
+
+private fun <T> Call<T>.enqueue(callback: Callback<StudentsList>) {
+
 }

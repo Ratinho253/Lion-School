@@ -3,10 +3,10 @@ package br.senai.sp.jandira.lionschool.service
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-interface RetrofitiFactory{
+class RetofitiFactory {
 
     private val BASE_URL: String
-        get() = "https://alive-bull-leotard.cyclic.app/v1/lion-school/Cursos"
+        get() = "https://alive-bull-leotard.cyclic.app/v1/lion-school/"
 
     private val retrofitFactory: Retrofit
         get() = Retrofit.Builder()
@@ -14,7 +14,11 @@ interface RetrofitiFactory{
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    fun getCharacterService () : CharacterService {
-        return retrofitFactory.create(CharacterService::class.java)
+    fun getCharacterService () : CoursesServices {
+        return retrofitFactory.create(CoursesServices::class.java)
+    }
+
+    fun getStudentsService(): StudentsServices {
+        return retrofitFactory.create(StudentsServices::class.java)
     }
 }
