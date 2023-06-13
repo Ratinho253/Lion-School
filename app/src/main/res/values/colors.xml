@@ -8,4 +8,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="eu_sei">#8E8E8E</color>
+    <color name="blue_default">#3347B0</color>
+    <color name="yellow_default">#E5B657</color>
+    <color name="second_blue">#BCC2E5</color>
+    <color name="gray_text">#545454</color>
+    <color name="third_blue_gradient">#707EC8</color>
 </resources>

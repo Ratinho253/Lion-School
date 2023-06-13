@@ -1,11 +1,13 @@
 package br.senai.sp.jandira.lionschool
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -15,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -47,6 +50,8 @@ class StudentsCourses : ComponentActivity() {
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun studentsCourses(siglaCurso: String) {
+
+    val context = LocalContext.current
 
     var listStudents by remember {
         mutableStateOf(listOf<Students>())
@@ -148,7 +153,13 @@ fun studentsCourses(siglaCurso: String) {
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(100.dp),
+                                .height(100.dp)
+                                .clickable{
+                                    var openStudents = Intent(context, PerformanceStudent::class.java)
+
+                                    openStudents.putExtra("matricula", it.matricula)
+                                    context.startActivity(openStudents)
+                                },
                             backgroundColor = Color(208, 220, 238),
                             shape = RoundedCornerShape(16.dp)
                         ) {
